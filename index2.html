@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拾光小栈 - 个人博客</title>
+    <style>
+        :root {
+            --bg: #f9f9f9;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --accent: #4a90d9;
+            --accent-hover: #357abd;
+            --border: #eaeaea;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ========== 顶部导航 ========== */
+        .navbar {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 1px;
+        }
+
+        .navbar .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 28px;
+        }
+
+        .navbar .nav-links a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .navbar .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        /* ========== 主容器 ========== */
+        .main-container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 32px 20px 60px;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* ========== 英雄区：个人介绍 ========== */
+        .hero {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 40px 36px;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 28px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .hero .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a90d9, #7bb3e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.6rem;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 4px 16px rgba(74, 144, 217, 0.25);
+        }
+
+        .hero .intro h1 {
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .hero .intro .tagline {
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .hero .intro .bio {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .hero .intro .location {
+            margin-top: 8px;
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        /* ========== 区块标题 ========== */
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-left: 12px;
+            border-left: 3px solid var(--accent);
+            color: var(--text);
+        }
+
+        /* ========== "我在做什么" 卡片 ========== */
+        .services {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .service-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 24px 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid transparent;
+            transition: all 0.25s;
+        }
+
+        .service-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-card .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .service-card h3 {
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .service-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* ========== 文章列表 ========== */
+        .article-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+
+        .article-item {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+
+        .article-item:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .article-item .article-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .article-item .article-info h3 a {
+            text-decoration: none;
+            color: var(--text);
+            transition: color 0.2s;
+        }
+
+        .article-item .article-info h3 a:hover {
+            color: var(--accent);
+        }
+
+        .article-item .article-info .meta {
+            font-size: 0.82rem;
+            color: #aaa;
+        }
+
+        .article-item .tag {
+            background: #eef4ff;
+            color: var(--accent);
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        /* ========== 页脚 ========== */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: #bbb;
+            font-size: 0.82rem;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* ========== 响应式 ========== */
+        @media (max-width: 600px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding: 28px 20px;
+            }
+
+            .hero .avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+
+            .hero .intro h1 {
+                font-size: 1.5rem;
+            }
+
+            .navbar .nav-links {
+                gap: 16px;
+            }
+
+            .services {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== 导航栏 ==================== -->
+    <nav class="navbar">
+        <span class="logo">🌿 拾光小栈</span>
+        <ul class="nav-links">
+            <li><a href="#">首页</a></li>
+            <li><a href="#">文章</a></li>
+            <li><a href="#">关于</a></li>
+            <li><a href="#">联系</a></li>
+        </ul>
+    </nav>
+
+    <!-- ==================== 主内容区 ==================== -->
+    <div class="main-container">
+
+        <!-- 个人介绍 -->
+        <section class="hero">
+            <div class="avatar">🧑‍💻</div>
+            <div class="intro">
+                <h1>你好，我是林一</h1>
+                <p class="tagline">全栈开发者 · 独立创作者 · 终身学习者</p>
+                <p class="bio">
+                    热爱技术与写作，专注于 Web 开发和效率工具。<br>
+                    这里记录着我的思考、实践与日常感悟，希望能给路过的你带来一点启发。
+                </p>
+                <p class="location">📍 中国 · 杭州</p>
+            </div>
+        </section>
+
+        <!-- 我在做什么 -->
+        <h2 class="section-title">我在做什么</h2>
+        <div class="services">
+            <div class="service-card">
+                <div class="icon">✍️</div>
+                <h3>技术博客</h3>
+                <p>分享前端、后端开发经验，以及踩过的坑和解决方案。</p>
+            </div>
+            <div class="service-card">
+                <div class="icon">🔧</div>
+                <h3>工具开发</h3>
+                <p>独立开发小而美的效率工具，让重复工作自动化。</p>
+            </div>
+            <div class="service-card">
+                <div class="icon">📚</div>
+                <h3>知识分享</h3>
+                <p>整理读书笔记与学习心得，构建个人知识体系。</p>
+            </div>
+            <div class="service-card">
+                <div class="icon">🤝</div>
+                <h3>咨询服务</h3>
+                <p>提供个人网站搭建、技术选型等一对一咨询服务。</p>
+            </div>
+        </div>
+
+        <!-- 最新文章 -->
+        <h2 class="section-title">最新文章</h2>
+        <div class="article-list">
+            <div class="article-item">
+                <div class="article-info">
+                    <h3><a href="#">从零搭建个人博客：Halo 部署与备案全流程</a></h3>
+                    <span class="meta">2026-06-20 · 阅读 1.2k</span>
+                </div>
+                <span class="tag">教程</span>
+            </div>
+            <div class="article-item">
+                <div class="article-info">
+                    <h3><a href="#">Python 自动化监控：抢低价云服务器的正确姿势</a></h3>
+                    <span class="meta">2026-06-15 · 阅读 860</span>
+                </div>
+                <span class="tag">Python</span>
+            </div>
+            <div class="article-item">
+                <div class="article-info">
+                    <h3><a href="#">我的 2026 技术栈：那些让我效率翻倍的工具</a></h3>
+                    <span class="meta">2026-06-08 · 阅读 2.3k</span>
+                </div>
+                <span class="tag">效率</span>
+            </div>
+            <div class="article-item">
+                <div class="article-info">
+                    <h3><a href="#">微信机器人实战：用 wx4py 实现群聊智能回复</a></h3>
+                    <span class="meta">2026-05-28 · 阅读 1.5k</span>
+                </div>
+                <span class="tag">实战</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== 页脚 ==================== -->
+    <footer class="footer">
+        <p>© 2026 拾光小栈 · 由 <a href="#">林一</a> 设计与维护 · 豫ICP备XXXXXXXX号-1</p>
+    </footer>
+
+</body>
+</html>
