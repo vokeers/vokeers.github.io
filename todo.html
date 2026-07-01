@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>待办事项</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.container {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+h1 { color: #333; margin-bottom: 24px; font-size: 24px; }
+.input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.input-row input {
+  flex: 1;
+  padding: 10px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .2s;
+}
+.input-row input:focus { border-color: #667eea; }
+.input-row button {
+  padding: 10px 20px;
+  background: #667eea;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background .2s;
+  white-space: nowrap;
+}
+.input-row button:hover { background: #5a6fd6; }
+.stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #888;
+}
+.stats button {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+  transition: all .2s;
+}
+.stats button:hover { border-color: #e74c3c; color: #e74c3c; }
+.list { flex: 1; overflow-y: auto; }
+.item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  transition: opacity .2s;
+}
+.item:last-child { border-bottom: none; }
+.item input[type="checkbox"] {
+  width: 18px; height: 18px;
+  accent-color: #667eea;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.item .text {
+  flex: 1;
+  margin: 0 12px;
+  font-size: 14px;
+  color: #333;
+  word-break: break-word;
+}
+.item .text.done { text-decoration: line-through; color: #bbb; }
+.item .del {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color .2s;
+  flex-shrink: 0;
+}
+.item .del:hover { color: #e74c3c; }
+.empty {
+  text-align: center;
+  color: #ccc;
+  font-size: 14px;
+  padding: 40px 0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>待办事项</h1>
+  <div class="input-row">
+    <input id="input" type="text" placeholder="输入待办事项..." autofocus>
+    <button id="addBtn">添加</button>
+  </div>
+  <div class="stats">
+    <span id="counter">0 项</span>
+    <button id="clearBtn">清除已完成</button>
+  </div>
+  <div class="list" id="list"></div>
+</div>
+<script>
+const STORAGE_KEY = 'todos';
+let todos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+const input = document.getElementById('input');
+const addBtn = document.getElementById('addBtn');
+const list = document.getElementById('list');
+const counter = document.getElementById('counter');
+const clearBtn = document.getElementById('clearBtn');
+
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(todos)); }
+
+function render() {
+  const total = todos.length;
+  const done = todos.filter(t => t.done).length;
+  counter.textContent = `${total} 项`;
+  if (total === 0) {
+    list.innerHTML = '<div class="empty">暂无待办事项</div>';
+    return;
+  }
+  list.innerHTML = todos.map((t, i) => `
+    <div class="item">
+      <input type="checkbox" ${t.done ? 'checked' : ''} data-index="${i}">
+      <span class="text ${t.done ? 'done' : ''}">${escapeHtml(t.text)}</span>
+      <button class="del" data-index="${i}">×</button>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function add() {
+  const text = input.value.trim();
+  if (!text) return;
+  todos.push({ text, done: false, createdAt: Date.now() });
+  input.value = '';
+  save(); render(); input.focus();
+}
+
+function toggle(index) {
+  todos[index].done = !todos[index].done;
+  save(); render();
+}
+
+function remove(index) {
+  todos.splice(index, 1);
+  save(); render(); input.focus();
+}
+
+function clearDone() {
+  todos = todos.filter(t => !t.done);
+  save(); render(); input.focus();
+}
+
+addBtn.addEventListener('click', add);
+input.addEventListener('keydown', e => { if (e.key === 'Enter') add(); });
+list.addEventListener('click', e => {
+  const idx = e.target.dataset.index;
+  if (idx === undefined) return;
+  if (e.target.type === 'checkbox') toggle(+idx);
+  if (e.target.classList.contains('del')) remove(+idx);
+});
+clearBtn.addEventListener('click', clearDone);
+
+render();
+</script>
+</body>
+</html>
